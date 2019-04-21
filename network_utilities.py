@@ -52,7 +52,6 @@ def get_wifi_info():
     wifi_list = []
     sys_type = system_info()
     if 'Windows' in sys_type:
-        # TODO Implement windows subprocess
         out = subprocess.check_output('netsh wlan show networks mode=bssid').decode(encoding='utf_8')
         out_array = out.split('\n')
         wifi_list = []
@@ -65,8 +64,10 @@ def get_wifi_info():
                 channel.append(line.split(':',1)[1].strip())
         for i in range(len(bssid)):
             wifi_list.append({'macAddress': bssid[i], 'channel': channel[i]})
+        print("Using wifi access points:")
         for item in wifi_list:
             print(item)
+        print()
     elif 'Darwin' in sys_type:
         out = subprocess.check_output(['/usr/local/bin/airport', '--scan']).decode(encoding='utf_8')
         wifi_list = []
@@ -81,9 +82,10 @@ def get_wifi_info():
             wifi_list.append({'macAddress': line[bssid_index:bssid_index + 17],
                               'signalStrength': line[rssi_index:rssi_index + 3],
                               'channel': line[channel_index:channel_index + 2].strip()})
+        print("Using wifi access points:")
         for item in wifi_list:
             print(item)
-
+        print()
     else:
         # TODO: Implement linux subprocess
         pass
