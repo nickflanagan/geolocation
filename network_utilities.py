@@ -51,10 +51,22 @@ def build_json(wifi_list):
 def get_wifi_info():
     wifi_list = []
     sys_type = system_info()
-    if 'windows' in sys_type:
+    if 'Windows' in sys_type:
         # TODO Implement windows subprocess
-        # out = subprocess.check_output('netsh wlan show networks mode=bssid').decode(encoding='utf_8')
-        pass
+        out = subprocess.check_output('netsh wlan show networks mode=bssid').decode(encoding='utf_8')
+        out_array = out.split('\n')
+        wifi_list = []
+        bssid = []
+        channel = []
+        for line in out_array:
+            if 'BSSID' in line:
+                bssid.append(line.split(':',1)[1].strip())
+            if 'Channel' in line:
+                channel.append(line.split(':',1)[1].strip())
+        for i in range(len(bssid)):
+            wifi_list.append({'macAddress': bssid[i], 'channel': channel[i]})
+        for item in wifi_list:
+            print(item)
     elif 'Darwin' in sys_type:
         out = subprocess.check_output(['/usr/local/bin/airport', '--scan']).decode(encoding='utf_8')
         wifi_list = []
